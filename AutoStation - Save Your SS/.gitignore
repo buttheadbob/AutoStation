@@ -1,0 +1,9 @@
+
+GameBinaries/
+TorchBinaries/
+Build/
+bin/
+obj/
+.svn/
+.git/
+.vs/
