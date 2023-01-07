@@ -40,11 +40,9 @@ namespace AutoStation.Utils
         {
             Stopwatch msTracker = Stopwatch.StartNew();
             NPCs = MySession.Static.Players.GetNPCIdentities();
-
-            
+                        
             if (!AutoStation_Main.Instance.Config.Enable)
-                return;
-            
+                return;            
 
             if (MySession.Static.IsSaveInProgress)
                 return;
@@ -73,14 +71,16 @@ namespace AutoStation.Utils
 
                     Interlocked.Increment(ref GridsCounted);
 
-                    if (state != null && !(bool)state)
+                    
+                    if (Griddy.GridSizeEnum == VRage.Game.MyCubeSize.Small) // Converting small grids back to dynamic is not easy for players.
                     {
-                        if (Griddy.GridSizeEnum == VRage.Game.MyCubeSize.Small) // Converting small grids back to dynamic is not easy for players.
+                        Interlocked.Increment(ref SmallGrids);
+                        if (state != null && !(bool)state)
                         {
-                            Interlocked.Increment(ref SmallGrids);
                             continue;
                         }
                     }
+                    
                     
                     if (Griddy.BigOwners == null) // Not all blocks have ownership and floating blocks with no owners are still grids.
                         continue;
