@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Torch;
+﻿using Torch;
 
-namespace AutoStation_SaveYourSS
+namespace AutoStation
 {
     public class AutoStation_Config : ViewModel
     {
@@ -23,5 +20,7 @@ namespace AutoStation_SaveYourSS
         private bool _ConvertGridsInGravity = false;
         public bool ConvertGridsInGravity { get => _ConvertGridsInGravity; set => SetValue(ref _ConvertGridsInGravity, value); }
 
+        private bool _GridTrackingMode = false;
+        public bool GridTrackingMode { get => _GridTrackingMode; set => SetValue(ref _GridTrackingMode, value);}
     }
 }

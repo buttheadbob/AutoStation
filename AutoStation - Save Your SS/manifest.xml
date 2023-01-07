@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <PluginManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Name>AutoStation - Save Your SS</Name>
+  <Name>AutoStation</Name>
   <Guid>e678cf63-204e-46f0-8111-626ecedf6cd2</Guid>
   <Repository>None</Repository>
   <Version>v1.0.0</Version>

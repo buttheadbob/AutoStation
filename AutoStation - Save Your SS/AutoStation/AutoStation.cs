@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using AutoStation.Utils;
+using NLog;
 using System;
 using System.IO;
 using System.Windows.Controls;
@@ -9,21 +10,20 @@ using Torch.API.Plugins;
 using Torch.API.Session;
 using Torch.Session;
 
-namespace AutoStation_SaveYourSS
+namespace AutoStation
 {
-    public class AutoStation : TorchPluginBase, IWpfPlugin
+    public class AutoStation_Main : TorchPluginBase, IWpfPlugin
     {
 
         public static readonly Logger Log = LogManager.GetLogger("AutoStation");
-
         private static readonly string CONFIG_FILE_NAME = "AutoStation___Save_Your_SSConfig.cfg";
 
-        private AutoStation___Save_Your_SSControl _control;
-        public UserControl GetControl() => _control ?? (_control = new AutoStation___Save_Your_SSControl());
+        private AutoStation_Control _control;
+        public UserControl GetControl() => _control ?? (_control = new AutoStation_Control());
 
         private Persistent<AutoStation_Config> _config;
         public AutoStation_Config Config => _config?.Data;
-        public static AutoStation Instance { get; private set; }
+        public static AutoStation_Main Instance { get; private set; }
 
         public override void Init(ITorchBase torch)
         {
@@ -46,10 +46,12 @@ namespace AutoStation_SaveYourSS
             {
                 case TorchSessionState.Loaded:
                     Log.Info("Session Loaded!");
+                    Auto.Init();
                     break;
 
                 case TorchSessionState.Unloading:
                     Log.Info("Session Unloading!");
+                    Auto.Dispose();
                     break;
             }
         }
