@@ -21,7 +21,7 @@ namespace AutoStation.Utils
 
         public static void Init() 
         {
-            AutoRun_Timer = new Timer(AutoRun_Timer_CB, null, AutoStation_Main.Instance.Config.DelayStart, AutoStation_Main.Instance.Config.RunFrequency);
+            AutoRun_Timer = new Timer(AutoRun_Timer_CB, null, AutoStation_Main.Instance.Config.DelayStart, AutoStation_Main.Instance.Config.RunFrequency * 1000 * 60);
 
             if (AutoStation_Main.Instance.Config.GridTrackingMode)
             {
