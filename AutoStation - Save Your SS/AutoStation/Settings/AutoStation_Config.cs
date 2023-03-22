@@ -11,7 +11,7 @@ namespace AutoStation
         private int _DelayStart = 0; // Delay in milliseconds before AutoRun starts.
         public int DelayStart { get => _DelayStart; set => SetValue(ref _DelayStart, value);}
 
-        private int _RunFrequency = 1800000; // Runs the AutoStation every 30 minutes.
+        private int _RunFrequency = 30; // Runs the AutoStation every 30 minutes.
         public int RunFrequency { get => _RunFrequency; set => SetValue(ref _RunFrequency, value);}
 
         private int _MinutesOffline = 60;
