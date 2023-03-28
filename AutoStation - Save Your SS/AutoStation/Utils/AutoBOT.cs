@@ -1,4 +1,5 @@
-﻿using Sandbox;
+﻿using System;
+using Sandbox;
 using Sandbox.Engine.Multiplayer;
 using Sandbox.Game.Entities;
 using Sandbox.Game.GameSystems;
@@ -9,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using VRage.Network;
 using VRageMath;
 
 namespace AutoStation.Utils
@@ -91,7 +93,7 @@ namespace AutoStation.Utils
                     if (Tracking.HasMoved(Griddy.EntityId, Griddy.PositionComp.GetPosition()))
                         continue;
                     
-                    if (Griddy.GetOwnerLogoutTimeSeconds() > AutoStation_Main.Instance.Config.MinutesOffline * 60000) // Griddy.GetOwnerLogoutTimeSeconds() > AutoStation.Instance.Config.MinutesOffline * 60000
+                    if (Griddy.GetOwnerLogoutTimeSeconds() > AutoStation_Main.Instance.Config.MinutesOffline * 60)                     
                     {                        
                         if (state != null && !(bool)state)
                             if (!Vector3D.IsZero(MyGravityProviderSystem.CalculateNaturalGravityInPoint(Griddy.PositionComp.GetPosition())) && !AutoStation_Main.Instance.Config.ConvertGridsInGravity) // Dont convert grids in gravity unless enabled.
@@ -103,16 +105,9 @@ namespace AutoStation.Utils
                             
                             Griddy.Physics.Clear(); // Stop any drifting
                             Griddy.Physics.ClearSpeed(); // meh
-
-                            if (MySandboxGame.ConfigDedicated.SessionSettings.StationVoxelSupport) // Unsupported Stations Mode requires a different call to convert to station, or risk crashing.
-                            {
-                                MyMultiplayer.RaiseEvent(Griddy, (MyCubeGrid x) => x.ConvertToStatic);
-                            }
-                            else
-                            {
-                                MyMultiplayer.RaiseEvent(Griddy, (MyCubeGrid x) => x.Physics.ConvertToStatic);
-                            }
-
+                            
+                            Griddy.RequestConversionToStation();
+                            
                         }, "AutoStation");                        
                     }
                 }
@@ -168,14 +163,12 @@ namespace AutoStation.Utils
             if (TrackedGrids.TryGetValue(id, out Vector3D SavedLocation))
             {
                 if (SavedLocation == Location)
-                {
                     return false;
-                }
-                else
-                {
-                    TrackedGrids.TryUpdate(id, Location, SavedLocation);
-                    return true;
-                }
+                
+                
+                TrackedGrids.TryUpdate(id, Location, SavedLocation);
+                return true;
+                
             }
 
             TrackedGrids.TryAdd(id, Location);
