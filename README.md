@@ -24,4 +24,6 @@ convert to station mode as long as the grid is not in the same place across 2 co
   
 ```!AS ForceRun``` Forces the AutoConvert to check and convert grids.  
   
-```!AS ForceAll_ADMIN``` Forces ALL grids to convert to station mode.  This will stop every grid regardless if large or small grid and gravity.  
+```!AS ForceAll_ADMIN``` Forces ALL grids to convert to station mode.  This will stop every grid regardless if large or small grid and gravity.    
+
+For more information or help, join my discord server --> https://discord.gg/rSuxGrHrrt
