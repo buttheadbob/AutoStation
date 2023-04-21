@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using VRage.Collections;
+using VRage.Groups;
 using VRage.Network;
 using VRageMath;
 
@@ -55,26 +57,24 @@ namespace AutoStation.Utils
             int GridsCounted = 0;
             int GridsConverted = 0;
             int SmallGrids = 0;
-
-            Parallel.ForEach(MyCubeGridGroups.Static.Mechanical.Groups, new ParallelOptions() { MaxDegreeOfParallelism = MySandboxGame.NumberOfCores / 2 }, group =>
+            
+            HashSetReader<MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Group> groups = MyCubeGridGroups.Static.Mechanical.Groups;
+            
+            Parallel.ForEach(groups, new ParallelOptions() {MaxDegreeOfParallelism = MySandboxGame.NumberOfCores / 2}, (group) =>
             {
-                if (group.Nodes.Count == 0)
-                    return;
-
-                foreach (var GroupNode in group.Nodes)
+                foreach (MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Node node in group.Nodes)
                 {
-                    MyCubeGrid Griddy = GroupNode.NodeData;
-                                        
-                    if (Griddy.IsStatic)  // Already in station mode.
+                    MyCubeGrid _grid = node.NodeData;
+                    
+                    if (_grid.IsStatic)  // Already in station mode.
                         continue;
 
-                    if (Griddy.Physics == null || Griddy.IsPreview || Griddy.MarkedForClose)
+                    if (_grid.Physics == null || _grid.IsPreview || _grid.MarkedForClose)
                         continue;
 
                     Interlocked.Increment(ref GridsCounted);
 
-                    
-                    if (Griddy.GridSizeEnum == VRage.Game.MyCubeSize.Small) // Converting small grids back to dynamic is not easy for players.
+                    if (_grid.GridSizeEnum == VRage.Game.MyCubeSize.Small) // Converting small grids back to dynamic is not easy for players.
                     {
                         Interlocked.Increment(ref SmallGrids);
                         if (state != null && !(bool)state)
@@ -82,41 +82,61 @@ namespace AutoStation.Utils
                             continue;
                         }
                     }
-                    
-                    
-                    if (Griddy.BigOwners == null) // Not all blocks have ownership and floating blocks with no owners are still grids.
+
+                    if (_grid.BigOwners == null) // Not all blocks have ownership and floating blocks with no owners are still grids.
                         continue;
 
-                    if (PlayerData.IsID_NPC(Griddy.BigOwners.FirstOrDefault()))
+                    if (PlayerData.IsID_NPC(_grid.BigOwners.FirstOrDefault()))
                         continue;
                     
-                    if (Tracking.HasMoved(Griddy.EntityId, Griddy.PositionComp.GetPosition()))
+                    if (Tracking.HasMoved(_grid.EntityId, _grid.PositionComp.GetPosition()))
                         continue;
                     
-                    if (Griddy.GetOwnerLogoutTimeSeconds() > AutoStation_Main.Instance.Config.MinutesOffline * 60)                     
-                    {                        
-                        if (state != null && !(bool)state)
-                            if (!Vector3D.IsZero(MyGravityProviderSystem.CalculateNaturalGravityInPoint(Griddy.PositionComp.GetPosition())) && !AutoStation_Main.Instance.Config.ConvertGridsInGravity) // Dont convert grids in gravity unless enabled.
-                                continue;
-
+                    // Forced convert by admin command, no gravity options need to be checked.
+                    if (state != null && (bool) state)
+                    {
                         Interlocked.Increment(ref GridsConverted);
-                        MySandboxGame.Static.Invoke(() =>
-                        {
-                            
-                            Griddy.Physics.Clear(); // Stop any drifting
-                            Griddy.Physics.ClearSpeed(); // meh
-                            
-                            Griddy.RequestConversionToStation();
-                            
-                        }, "AutoStation");                        
+                        ConvertThis(_grid);
                     }
+
+                    bool InGrav = !Vector3D.IsZero(MyGravityProviderSystem.CalculateNaturalGravityInPoint(_grid.PositionComp.GetPosition()));
+                    
+                    if (!AutoStation_Main.Instance.Config.ConvertGridsInGravity && InGrav ) // Dont convert grids in gravity unless enabled.
+                        continue;
+                    
+                    if (_grid.GetOwnerLogoutTimeSeconds() <= AutoStation_Main.Instance.Config.MinutesOffline * 60)                     
+                        continue;
+
+                    // This is a large grid subgrid in gravity, ignore subgrids in gravity option is disabled.
+                    if (InGrav && !AutoStation_Main.Instance.Config.IgnoreSubGridsInGravity && _grid.Parent != null)
+                        ConvertThis(_grid);
+
+                    // Large grid in gravity, convert in gravity option is enabled.
+                    if (InGrav && AutoStation_Main.Instance.Config.ConvertGridsInGravity && _grid.Parent == null)
+                        ConvertThis(_grid);
+                    
+                    // Large grid in space, convert subgrids option is not enabled
+                    if (!InGrav && !AutoStation_Main.Instance.Config.IgnoreSubGridsInSpace && _grid.Parent != null)
+                        ConvertThis(_grid);
+
                 }
             });
-
+           
             msTracker.Stop();
             AutoStation_Main.Log.Info($"{GridsConverted} of {GridsCounted} dynamic grids converted to station mode during AutoConvert.  Found {SmallGrids} small grids.  Took {msTracker.Elapsed.TotalMilliseconds} ms.");
         }
-    }    
+
+        private static void ConvertThis(MyCubeGrid grid)
+        {
+            MySandboxGame.Static.Invoke(() =>
+            {
+                grid.Physics.Clear(); // Stop any drifting
+                grid.Physics.ClearSpeed(); // meh
+                            
+                grid.RequestConversionToStation();
+            }, "AutoStation");
+        }
+    }
 
     public static class PlayerData
     {

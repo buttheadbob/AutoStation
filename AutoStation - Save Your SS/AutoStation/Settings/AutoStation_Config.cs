@@ -1,4 +1,5 @@
-﻿using Torch;
+﻿using Sandbox.Graphics.GUI;
+using Torch;
 
 namespace AutoStation
 {
@@ -22,5 +23,11 @@ namespace AutoStation
 
         private bool _GridTrackingMode = false;
         public bool GridTrackingMode { get => _GridTrackingMode; set => SetValue(ref _GridTrackingMode, value);}
+
+        private bool _ignoreSubGridsInSpace = false;
+        public bool IgnoreSubGridsInSpace { get => _ignoreSubGridsInSpace; set => SetValue(ref _ignoreSubGridsInSpace, value); }
+
+        private bool _ignoreSubGridsInGravity;
+        public bool IgnoreSubGridsInGravity { get => _ignoreSubGridsInGravity; set => SetValue(ref _ignoreSubGridsInGravity, value); }
     }
 }
