@@ -24,10 +24,16 @@ namespace AutoStation
         private bool _GridTrackingMode = false;
         public bool GridTrackingMode { get => _GridTrackingMode; set => SetValue(ref _GridTrackingMode, value);}
 
-        private bool _ignoreSubGridsInSpace = false;
+        private bool _ignoreSubGridsInSpace = false; // Solar Arrays, and so on... I hope... ferking players!
         public bool IgnoreSubGridsInSpace { get => _ignoreSubGridsInSpace; set => SetValue(ref _ignoreSubGridsInSpace, value); }
 
-        private bool _ignoreSubGridsInGravity;
+        private bool _ignoreSubGridsInGravity = true; // Wheels, Solar Arrays, and so on... I hope... ferking players!
         public bool IgnoreSubGridsInGravity { get => _ignoreSubGridsInGravity; set => SetValue(ref _ignoreSubGridsInGravity, value); }
+
+        private bool _showConvertedGridsNameLog = false;
+        public bool ShowConvertedGridsNameLog { get => _showConvertedGridsNameLog; set => SetValue(ref _showConvertedGridsNameLog, value); }
+        
+        private bool _showConvertedGridsOwnerNameLog = false;
+        public bool ShowConvertedGridsOwnerNameLog { get => _showConvertedGridsOwnerNameLog; set => SetValue(ref _showConvertedGridsOwnerNameLog, value); }
     }
 }

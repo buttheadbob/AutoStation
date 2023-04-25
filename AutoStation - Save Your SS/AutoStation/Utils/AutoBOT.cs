@@ -1,6 +1,4 @@
-﻿using System;
-using Sandbox;
-using Sandbox.Engine.Multiplayer;
+﻿using Sandbox;
 using Sandbox.Game.Entities;
 using Sandbox.Game.GameSystems;
 using Sandbox.Game.World;
@@ -8,11 +6,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using VRage.Collections;
 using VRage.Groups;
-using VRage.Network;
 using VRageMath;
 
 namespace AutoStation.Utils
@@ -20,8 +18,9 @@ namespace AutoStation.Utils
     public static class Auto
     {
         private static Timer AutoRun_Timer;
-        private static TimerCallback AutoRun_Timer_CB = new TimerCallback(AutoRun); 
+        private static TimerCallback AutoRun_Timer_CB = AutoRun; 
         public static HashSet<long> NPCs = new HashSet<long>();
+        private static List<string> ConversionLog = new List<string>();
 
         public static void Init() 
         {
@@ -57,7 +56,7 @@ namespace AutoStation.Utils
             int GridsCounted = 0;
             int GridsConverted = 0;
             int SmallGrids = 0;
-            
+
             HashSetReader<MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Group> groups = MyCubeGridGroups.Static.Mechanical.Groups;
             
             Parallel.ForEach(groups, new ParallelOptions() {MaxDegreeOfParallelism = MySandboxGame.NumberOfCores / 2}, (group) =>
@@ -108,26 +107,56 @@ namespace AutoStation.Utils
                         continue;
 
                     // This is a large grid subgrid in gravity, ignore subgrids in gravity option is disabled.
-                    if (InGrav && !AutoStation_Main.Instance.Config.IgnoreSubGridsInGravity && _grid.Parent != null)
+                    if (InGrav && !AutoStation_Main.Instance.Config.IgnoreSubGridsInGravity && node.ParentLinks.Count > 0)
+                    {
                         ConvertThis(_grid);
+                        Interlocked.Increment(ref GridsConverted);
+                    }
 
                     // Large grid in gravity, convert in gravity option is enabled.
-                    if (InGrav && AutoStation_Main.Instance.Config.ConvertGridsInGravity && _grid.Parent == null)
+                    if (InGrav && AutoStation_Main.Instance.Config.ConvertGridsInGravity && node.ParentLinks.Count == 0)
+                    {
                         ConvertThis(_grid);
+                        Interlocked.Increment(ref GridsConverted);
+                    }
                     
-                    // Large grid in space, convert subgrids option is not enabled
-                    if (!InGrav && !AutoStation_Main.Instance.Config.IgnoreSubGridsInSpace && _grid.Parent != null)
+                    // Large subgrid in space, ignore sub-grids option is not checked.
+                    if (!InGrav && !AutoStation_Main.Instance.Config.IgnoreSubGridsInSpace && node.ParentLinks.Count > 0)
+                    {
                         ConvertThis(_grid);
-
+                        Interlocked.Increment(ref GridsConverted);
+                    }
+                    
+                    // Large grid in space.
+                    if (!InGrav && node.ParentLinks.Count == 0)
+                    {
+                        ConvertThis(_grid);
+                        Interlocked.Increment(ref GridsConverted);
+                    }
                 }
             });
            
             msTracker.Stop();
-            AutoStation_Main.Log.Info($"{GridsConverted} of {GridsCounted} dynamic grids converted to station mode during AutoConvert.  Found {SmallGrids} small grids.  Took {msTracker.Elapsed.TotalMilliseconds} ms.");
+            
+            StringBuilder log = new StringBuilder().AppendLine();
+            foreach (string _log in ConversionLog)
+            {
+                log.AppendLine(_log);
+            }
+
+            log.AppendLine("———————————————————————————————————————————————————");
+            log.AppendLine($"{GridsConverted} of {GridsCounted} dynamic grids converted to station mode during AutoConvert.  Found {SmallGrids} small grids.  Took {msTracker.Elapsed.TotalMilliseconds} ms.");
+            
+            AutoStation_Main.Log.Info(log);
         }
 
         private static void ConvertThis(MyCubeGrid grid)
         {
+            if (AutoStation_Main.Instance.Config.ShowConvertedGridsNameLog)
+                ConversionLog.Add(AutoStation_Main.Instance.Config.ShowConvertedGridsOwnerNameLog
+                    ? $"Converting {grid.DisplayName} owned by {MySession.Static.Players.TryGetIdentity(grid.BigOwners.FirstOrDefault()).DisplayName}"
+                    : $"Converting {grid.DisplayName}");
+            
             MySandboxGame.Static.Invoke(() =>
             {
                 grid.Physics.Clear(); // Stop any drifting
