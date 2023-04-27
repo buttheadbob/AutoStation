@@ -1,3 +1,12 @@
+<p align="center">
+  <a href="https://discord.gg/rSuxGrHrrt">
+    <img src="https://img.shields.io/badge/VERSION-1.1.0.w2t-red" alt="Discord Server">
+  </a>
+  <a href="https://discord.gg/rSuxGrHrrt">
+    <img src="https://discordapp.com/api/guilds/1089078620829536269/widget.png?style=shield" alt="Discord Server">
+  </a>
+  </p> 
+
 # AutoStation
 
 ## Physics calculations on dynamic grids cost the server many times more than there station counterparts.  
