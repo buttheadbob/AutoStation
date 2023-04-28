@@ -35,5 +35,8 @@ namespace AutoStation
         
         private bool _showConvertedGridsOwnerNameLog = false;
         public bool ShowConvertedGridsOwnerNameLog { get => _showConvertedGridsOwnerNameLog; set => SetValue(ref _showConvertedGridsOwnerNameLog, value); }
+
+        private double _minDistanceToBeConsideredInUse = 10.0D;
+        public double MinDistanceToBeConsideredInUse { get => _minDistanceToBeConsideredInUse; set => SetValue(ref _minDistanceToBeConsideredInUse, value); }
     }
 }

@@ -18,18 +18,19 @@ namespace AutoStation.Commands
 
         [Command("ForceRun", "Force the AutoStation to run.")]
         [Permission(MyPromoteLevel.Moderator)]
-        public void ForceRun()
+        public async void ForceRun()
         {
             Context.Respond("Converting compatible grids to station mode.");
-            Utils.Auto.AutoRun(null);
+            await Utils.Auto.AutoRun(null);
         }
 
-        [Command("ForceAll_ADMIN", "Forces ALL large grids, small grids, grids in gravity, etc... to station mode (except when in a safezone with conversion disabled.")]
+        [Command("ForceAll_ADMIN", "Forces grids to convert.  ForceALL_ADMIN (bool)[smallGrids] (bool)[subGrids].  Use without the bools to convert small or sub grids will cause only large grids to be converted.")]
         [Permission(MyPromoteLevel.Admin)]
-        public void ForceAll_ADMIN()
+        public async void ForceAll_ADMIN(bool smallGrids=false, bool subGrids=false)
         {
+            
             Context.Respond("Converting ALL grids to station mode.");
-            Utils.Auto.AutoRun(true);
+            await Utils.Auto.AutoRun(true, smallGrids, subGrids);
         }
     }
 }
