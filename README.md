@@ -26,6 +26,8 @@ Use this plugin convert inactive grids to station mode and help preserver simspe
   
 ```Track Grids``` When enabled, allows players to use team member grids without fear it will  
 convert to station mode as long as the grid is not in the same place across 2 conversion runs.  
+```Minimum Distance``` Used in consideration if the grid should be considered not moving, even when it technically is.  This helps with grids floating around stations and other similar scenarios.  
+
 ** The cost to track grids is extremely minimal.  
 
 ### Admin Commands  
@@ -33,6 +35,6 @@ convert to station mode as long as the grid is not in the same place across 2 co
   
 ```!AS ForceRun``` Forces the AutoConvert to check and convert grids.  
   
-```!AS ForceAll_ADMIN``` Forces ALL grids to convert to station mode.  This will stop every grid regardless if large or small grid and gravity.    
+```!AS ForceAll_ADMIN [bool ForceSmallGrids] [bool ForceSubGrids]``` Use without the bools to convert small or sub grids will cause only large grids to be converted. 
 
 For more information or help, join my discord server --> https://discord.gg/rSuxGrHrrt
