@@ -7,13 +7,13 @@ namespace AutoStation
     {
         public AutoStation_Control()
         {            
-            DataContext = AutoStation_Main.Instance.Config;
+            DataContext = AutoStation_Main.Instance!.Config;
             InitializeComponent();
         }
 
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            AutoStation_Main.Instance.Save();
+            AutoStation_Main.Instance?.Save();
         }
     }
 }

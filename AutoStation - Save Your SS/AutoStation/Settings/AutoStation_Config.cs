@@ -1,5 +1,4 @@
-﻿using Sandbox.Graphics.GUI;
-using Torch;
+﻿using Torch;
 
 namespace AutoStation
 {
@@ -38,5 +37,8 @@ namespace AutoStation
 
         private double _minDistanceToBeConsideredInUse = 10.0D;
         public double MinDistanceToBeConsideredInUse { get => _minDistanceToBeConsideredInUse; set => SetValue(ref _minDistanceToBeConsideredInUse, value); }
+        
+        private bool _stopGridsWithNoOwner = false;
+        public bool StopGridsWithNoOwner { get => _stopGridsWithNoOwner; set => SetValue(ref _stopGridsWithNoOwner, value); }
     }
 }

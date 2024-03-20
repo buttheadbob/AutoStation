@@ -18,12 +18,12 @@ namespace AutoStation
         public static readonly Logger Log = LogManager.GetLogger("AutoStation");
         private static readonly string CONFIG_FILE_NAME = "AutoStation___Save_Your_SSConfig.cfg";
 
-        private AutoStation_Control _control;
-        public UserControl GetControl() => _control ?? (_control = new AutoStation_Control());
+        private AutoStation_Control? _control;
+        public UserControl GetControl() => _control ??= new AutoStation_Control();
 
-        private Persistent<AutoStation_Config> _config;
-        public AutoStation_Config Config => _config?.Data;
-        public static AutoStation_Main Instance { get; private set; }
+        private Persistent<AutoStation_Config>? _config;
+        public AutoStation_Config? Config => _config?.Data;
+        public static AutoStation_Main? Instance { get; private set; }
 
         public override void Init(ITorchBase torch)
         {
@@ -85,7 +85,7 @@ namespace AutoStation
         {
             try
             {
-                _config.Save();
+                _config?.Save();
                 Log.Info("Configuration Saved.");
             }
             catch (IOException e)

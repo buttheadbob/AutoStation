@@ -21,7 +21,7 @@ namespace AutoStation.Commands
         public async void ForceRun()
         {
             Context.Respond("Converting compatible grids to station mode.");
-            await Utils.Auto.AutoRun(null);
+            await Utils.Auto.AutoRun();
         }
 
         [Command("ForceAll_ADMIN", "Forces grids to convert.  ForceALL_ADMIN (bool)[smallGrids] (bool)[subGrids].  Use without the bools to convert small or sub grids will cause only large grids to be converted.")]
