@@ -28,7 +28,6 @@ namespace AutoStation.Commands
         [Permission(MyPromoteLevel.Admin)]
         public async void ForceAll_ADMIN(bool smallGrids=false, bool subGrids=false)
         {
-            
             Context.Respond("Converting ALL grids to station mode.");
             await Utils.Auto.AutoRun(true, smallGrids, subGrids);
         }

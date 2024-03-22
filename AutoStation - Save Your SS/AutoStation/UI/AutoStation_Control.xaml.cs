@@ -1,7 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using AutoStation.Utils;
 
-namespace AutoStation
+namespace AutoStation.UI
 {
     public partial class AutoStation_Control : UserControl
     {
@@ -14,6 +15,9 @@ namespace AutoStation
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
             AutoStation_Main.Instance?.Save();
+            
+            if (int.TryParse(Frequency.Text, out int newFrequency))
+                Auto.UpdateTimer(newFrequency);
         }
     }
 }

@@ -2,6 +2,7 @@
 using NLog;
 using System;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using Torch;
 using Torch.API;
@@ -9,14 +10,14 @@ using Torch.API.Managers;
 using Torch.API.Plugins;
 using Torch.API.Session;
 using Torch.Session;
+using AutoStation.UI;
 
 namespace AutoStation
 {
     public class AutoStation_Main : TorchPluginBase, IWpfPlugin
     {
-
         public static readonly Logger Log = LogManager.GetLogger("AutoStation");
-        private static readonly string CONFIG_FILE_NAME = "AutoStation___Save_Your_SSConfig.cfg";
+        private const string CONFIG_FILE_NAME = "AutoStation___Save_Your_SSConfig.cfg";
 
         private AutoStation_Control? _control;
         public UserControl GetControl() => _control ??= new AutoStation_Control();
@@ -31,13 +32,15 @@ namespace AutoStation
 
             SetupConfig();
 
-            var sessionManager = Torch.Managers.GetManager<TorchSessionManager>();
+            TorchSessionManager? sessionManager = Torch.Managers.GetManager<TorchSessionManager>();
             if (sessionManager != null)
                 sessionManager.SessionStateChanged += SessionChanged;
             else
                 Log.Warn("No session manager loaded!");
             Instance = this;
             Save();
+            
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => Log.Error((Exception)args.ExceptionObject, $"Unhandled Exception: {args}");
         }
 
         private void SessionChanged(ITorchSession session, TorchSessionState state)
@@ -58,13 +61,11 @@ namespace AutoStation
 
         private void SetupConfig()
         {
-            var configFile = Path.Combine(StoragePath, CONFIG_FILE_NAME);
+            string configFile = Path.Combine(StoragePath, CONFIG_FILE_NAME);
 
             try
             {
-
                 _config = Persistent<AutoStation_Config>.Load(configFile);
-
             }
             catch (Exception e)
             {
