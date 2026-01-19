@@ -47,7 +47,7 @@
         <TextBlock Grid.Column = "0" Grid.Row = "0" VerticalAlignment="Center" Text="AutoStation" FontWeight="Bold" FontSize="16" Grid.ColumnSpan="4" Margin="5" Foreground="#FF27E915"/>
         
         <TextBlock Grid.Column = "1" Grid.Row = "1" VerticalAlignment="Center" Text="Enable" Margin="5" Foreground="#FF27E915"/>
-        <CheckBox Name = "Enable" Grid.Column = "2" Grid.Row = "1" Margin="5" IsChecked="{Binding Enable}"/>
+        <CheckBox Grid.Column = "2" Grid.Row = "1" Margin="5" IsChecked="{Binding Enable}"/>
 
         <StackPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
             <CheckBox Content="Show Grid Names In Log" Margin="5" Foreground="#FF27E915" IsChecked="{Binding ShowConvertedGridsNameLog}"/>
@@ -55,38 +55,41 @@
         </StackPanel>
         
         <TextBlock Grid.Column = "1" Grid.Row = "3" VerticalAlignment="Center" Text="Delay Start in Minutes" ToolTip="Time from when the world loads until the automatic converter starts running." Margin="5" Foreground="#FF27E915"/>
-        <TextBox Name = "DelayStart" Grid.Column = "2" Grid.Row = "3" Margin="5" Text="{Binding DelayStart}"/>
+        <TextBox Grid.Column = "2" Grid.Row = "3" Margin="5" Text="{Binding DelayStart}"/>
 
         <TextBlock Grid.Column="1" Grid.Row = "4" VerticalAlignment="Center" Text="Frequency in Minutes" ToolTip="How often should AutoConvert run." Foreground="#FF27E915" Margin="5"/>
         <TextBox Name = "Frequency" Grid.Column = "2" Grid.Row = "4" Margin="5" Text="{Binding RunFrequency}"/>
 
         <TextBlock Grid.Column = "1" Grid.Row = "5" VerticalAlignment="Center" Text="Minutes Offline" ToolTip="How long the grid owner needs to be offline before converting to station." Margin="5" Foreground="#FF27E915" />
-        <TextBox x:Name="MinutesOffline" Grid.Column="2" Grid.Row="5" VerticalAlignment="Center" Text="{Binding MinutesOffline}" Margin="5" />
-
-        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="6" Grid.RowSpan="2" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3" />
-        <TextBlock Grid.Column = "1" Grid.Row = "6" VerticalAlignment="Center" Text="Convert Grids In Gravity" ToolTip="" Margin="5" Foreground="#FF27E915" />
-        <CheckBox x:Name="ConvertGridsInGravity" Grid.Column="2" Grid.Row="6" VerticalAlignment="Center" IsChecked="{Binding ConvertGridsInGravity}" />
-
-        <TextBlock Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" Text="It is not recommended to convert grids in gravity.  Any grids on or under the surface may become stuck in a voxel and require players to dig them out before converting to dynamic mode again." Foreground="#FF27E915" Margin="5" />
-
-        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="8" Grid.RowSpan="3" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3"/>
-        <TextBlock Grid.Column = "1" Grid.Row = "8" VerticalAlignment="Center" Text="Track Grids" ToolTip="" Margin="5" Foreground="#FF27E915" />
-        <CheckBox x:Name="TrackGrids" Grid.Column="2" Grid.Row="8" VerticalAlignment="Center" IsChecked="{Binding GridTrackingMode}" />
+        <TextBox Grid.Column="2" Grid.Row="5" VerticalAlignment="Center" Text="{Binding MinutesOffline}" Margin="5" />
         
-        <TextBlock Grid.Column="1" Grid.Row="9" Margin="5" Foreground="#FF27E915" TextWrapping="Wrap">Minimum distance required to have moved to be considered in use:</TextBlock>
-        <TextBox Grid.Column="2" Grid.Row="9" Margin="5" MaxLines="1" Height="20" ToolTip="This help detect slow drifting ships that are not in use!" Text="{Binding MinDistanceToBeConsideredInUse}"/>
+        <TextBlock Grid.Column="1" Grid.Row="6" Text="Min Dist From Players" ToolTip="Any grid inside this range will be skipped from all checks (except when admin runs).  Set to 0 to ignore player distances." Margin="5" Foreground="#FF27E915"/>
+        <TextBox Grid.Column="2" Grid.Row="6" VerticalAlignment="Center" Text="{Binding MinDistanceFromPlayers}" Margin="5"/>
         
-        <TextBlock Grid.Column = "1" Grid.Row = "10" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" Text="Tracking grids option allows players to use team mates grids without it turning to station mode on them, as long as they don't stay in one location for 2 consecutive checks." ToolTip="" Margin="5" Foreground="#FF27E915" />
+        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="7" Grid.RowSpan="2" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3" />
+        <TextBlock Grid.Column = "1" Grid.Row = "7" VerticalAlignment="Center" Text="Convert Grids In Gravity" ToolTip="" Margin="5" Foreground="#FF27E915" />
+        <CheckBox Grid.Column="2" Grid.Row="7" VerticalAlignment="Center" IsChecked="{Binding ConvertGridsInGravity}" />
+
+        <TextBlock Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" Text="It is not recommended to convert grids in gravity.  Any grids on or under the surface may become stuck in a voxel and require players to dig them out before converting to dynamic mode again." Foreground="#FF27E915" Margin="5" />
+
+        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="9" Grid.RowSpan="3" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3"/>
+        <TextBlock Grid.Column = "1" Grid.Row = "9" VerticalAlignment="Center" Text="Track Grids" ToolTip="" Margin="5" Foreground="#FF27E915" />
+        <CheckBox Grid.Column="2" Grid.Row="9" VerticalAlignment="Center" IsChecked="{Binding GridTrackingMode}" />
         
-        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="11" Grid.RowSpan="3" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3"/>
-        <TextBlock Grid.Column = "1" Grid.Row = "11" VerticalAlignment="Center" Text="Ignore subgrids In Space" ToolTip="" Margin="5" Foreground="#FF27E915" />
-        <CheckBox x:Name="SubGridsInSpace" Grid.Column="2" Grid.Row="11" VerticalAlignment="Center" IsChecked="{Binding IgnoreSubGridsInSpace}" Foreground="#FF27E915"> example: solar panel arrays </CheckBox>
-        <TextBlock Grid.Column = "1" Grid.Row = "12" VerticalAlignment="Center" Text="Ignore subgrids In Gravity" ToolTip="" Margin="5" Foreground="#FF27E915" />
-        <CheckBox x:Name="SubGridsInGravity" Grid.Column="2" Grid.Row="12" VerticalAlignment="Center" IsChecked="{Binding IgnoreSubGridsInGravity}" Foreground="#FF27E915"> example: wheels and solar panel Arrays!</CheckBox>
+        <TextBlock Grid.Column="1" Grid.Row="10" Margin="5" Foreground="#FF27E915" TextWrapping="Wrap">Minimum distance required to have moved to be considered in use:</TextBlock>
+        <TextBox Grid.Column="2" Grid.Row="10" Margin="5" MaxLines="1" Height="20" ToolTip="This help detect slow drifting ships that are not in use!" Text="{Binding MinDistanceToBeConsideredInUse}"/>
+        
+        <TextBlock Grid.Column = "1" Grid.Row = "11" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" Text="Tracking grids option allows players to use team mates grids without it turning to station mode on them, as long as they don't stay in one location for 2 consecutive checks." ToolTip="" Margin="5" Foreground="#FF27E915" />
+        
+        <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="12" Grid.RowSpan="3" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3"/>
+        <TextBlock Grid.Column = "1" Grid.Row = "12" VerticalAlignment="Center" Text="Ignore subgrids In Space" ToolTip="" Margin="5" Foreground="#FF27E915" />
+        <CheckBox Grid.Column="2" Grid.Row="12" VerticalAlignment="Center" IsChecked="{Binding IgnoreSubGridsInSpace}" Foreground="#FF27E915"> example: solar panel arrays </CheckBox>
+        <TextBlock Grid.Column = "1" Grid.Row = "13" VerticalAlignment="Center" Text="Ignore subgrids In Gravity" ToolTip="" Margin="5" Foreground="#FF27E915" />
+        <CheckBox Grid.Column="2" Grid.Row="13" VerticalAlignment="Center" IsChecked="{Binding IgnoreSubGridsInGravity}" Foreground="#FF27E915"> example: wheels and solar panel Arrays!</CheckBox>
 
         <Border Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="15" Grid.RowSpan="3" CornerRadius="15,15,15,15" BorderBrush="BurlyWood" BorderThickness="1" Margin="3" />
         <TextBlock Grid.Column="1" Grid.Row="16" VerticalAlignment="Center" Text="Convert unowned grids" Margin="5" Foreground="#FF27E915"/>
-        <CheckBox x:Name="UnownedGrids" Grid.Column="2" Grid.Row="16" VerticalAlignment="Center" IsChecked="{Binding StopGridsWithNoOwner}" ToolTip="Careful with this, it may create a field of death blocks for players to fly into..." Foreground="#FF27E915">example: chunks of armor blocks floating around after battles!  These will not be tracked or follow gravity rules.</CheckBox>
+        <CheckBox Grid.Column="2" Grid.Row="16" VerticalAlignment="Center" IsChecked="{Binding StopGridsWithNoOwner}" ToolTip="Careful with this, it may create a field of death blocks for players to fly into..." Foreground="#FF27E915">example: chunks of armor blocks floating around after battles!  These will not be tracked or follow gravity rules.</CheckBox>
         
         <Button Grid.Column="2" Grid.Row="20" Content="Save Config" Margin="5" Click="SaveButton_OnClick"></Button>
     </Grid>

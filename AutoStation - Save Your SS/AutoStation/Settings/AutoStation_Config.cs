@@ -17,28 +17,32 @@ namespace AutoStation
         private int _MinutesOffline = 60;
         public int MinutesOffline { get => _MinutesOffline; set => SetValue(ref _MinutesOffline, value);}
 
-        private bool _ConvertGridsInGravity = false;
+        private bool _ConvertGridsInGravity;
         public bool ConvertGridsInGravity { get => _ConvertGridsInGravity; set => SetValue(ref _ConvertGridsInGravity, value); }
 
-        private bool _GridTrackingMode = false;
+        private bool _GridTrackingMode;
         public bool GridTrackingMode { get => _GridTrackingMode; set => SetValue(ref _GridTrackingMode, value);}
 
-        private bool _ignoreSubGridsInSpace = false; // Solar Arrays, and so on... I hope... ferking players!
+        private bool _ignoreSubGridsInSpace; // Solar Arrays, and so on... I hope... ferking players!
         public bool IgnoreSubGridsInSpace { get => _ignoreSubGridsInSpace; set => SetValue(ref _ignoreSubGridsInSpace, value); }
 
         private bool _ignoreSubGridsInGravity = true; // Wheels, Solar Arrays, and so on... I hope... ferking players!
         public bool IgnoreSubGridsInGravity { get => _ignoreSubGridsInGravity; set => SetValue(ref _ignoreSubGridsInGravity, value); }
 
-        private bool _showConvertedGridsNameLog = false;
+        private bool _showConvertedGridsNameLog;
         public bool ShowConvertedGridsNameLog { get => _showConvertedGridsNameLog; set => SetValue(ref _showConvertedGridsNameLog, value); }
         
-        private bool _showConvertedGridsOwnerNameLog = false;
+        private bool _showConvertedGridsOwnerNameLog;
         public bool ShowConvertedGridsOwnerNameLog { get => _showConvertedGridsOwnerNameLog; set => SetValue(ref _showConvertedGridsOwnerNameLog, value); }
 
         private double _minDistanceToBeConsideredInUse = 10.0D;
         public double MinDistanceToBeConsideredInUse { get => _minDistanceToBeConsideredInUse; set => SetValue(ref _minDistanceToBeConsideredInUse, value); }
         
-        private bool _stopGridsWithNoOwner = false;
+        private bool _stopGridsWithNoOwner;
         public bool StopGridsWithNoOwner { get => _stopGridsWithNoOwner; set => SetValue(ref _stopGridsWithNoOwner, value); }
+
+        private int _minDistanceFromPlayers;
+        public int MinDistanceFromPlayers { get => _minDistanceFromPlayers; set => SetValue(ref _minDistanceFromPlayers, value); }
+
     }
 }
