@@ -145,6 +145,8 @@ namespace AutoStation.Utils
                             if (skipNeeded) continue;
                         }
                         
+                        bool inGrav = !Vector3D.IsZero(MyGravityProviderSystem.CalculateNaturalGravityInPoint(grid.PositionComp.GetPosition()));
+                        
                         // What to do with grids that have no owners. (Not all blocks have ownership, and floating blocks with no owners are still grids.)
                         switch (grid.BigOwners.Count)
                         {
@@ -154,7 +156,7 @@ namespace AutoStation.Utils
                             
                             // No owners, convert the grid.
                             case 0 when AutoStation_Main.Instance.Config.StopGridsWithNoOwner:
-                                if (node.ParentLinks.Count > 0 && AutoStation_Main.Instance.Config.IgnoreSubGridsInSpace)
+                                if (node.ParentLinks.Count > 0 && ((AutoStation_Main.Instance.Config.IgnoreSubGridsInSpace && !inGrav) || (AutoStation_Main.Instance.Config.IgnoreSubGridsInGravity && inGrav)))
                                     continue;
                                 
                                 if (ConvertThis(grid))
@@ -177,8 +179,6 @@ namespace AutoStation.Utils
 
                         if (Tracking.HasMoved(grid.EntityId, grid.PositionComp.GetPosition()))
                             continue;
-
-                        bool inGrav = !Vector3D.IsZero(MyGravityProviderSystem.CalculateNaturalGravityInPoint(grid.PositionComp.GetPosition()));
 
                         if (!AutoStation_Main.Instance.Config.ConvertGridsInGravity && inGrav) // Don't convert grids in gravity unless enabled.
                             continue;
