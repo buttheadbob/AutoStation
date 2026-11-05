@@ -1,0 +1,44 @@
+<Project>
+    <!-- Copy this file to Directory.Build.props (not committed) to override paths on your machine.
+         Only the Magnetar ServerPlugin uses these. The Torch plugin uses the GameBinaries/TorchBinaries junctions.
+         Leave a value empty to use the auto-detection below. -->
+    <PropertyGroup>
+        <!-- Folder containing SpaceEngineersDedicated.exe (Torch: its DedicatedServer64 folder) -->
+        <Dedicated64></Dedicated64>
+
+        <!-- The Magnetar install (holds Libraries\MagnetarLegacy\PluginSdk.dll on Windows, Bin\PluginSdk.dll on Linux) -->
+        <Magnetar></Magnetar>
+
+        <!-- Folder containing PluginSdk.dll. Normally derived from Magnetar below; set it to point at a PluginSdk
+             you built yourself from the Magnetar repository (PluginSdk\bin\Release\netstandard2.0). -->
+        <MagnetarBin></MagnetarBin>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" !$([MSBuild]::IsOSPlatform('Windows')) ">
+        <_UserHome>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))</_UserHome>
+    </PropertyGroup>
+
+    <!-- Dedicated64 (Dedicated Server, Steam app 298740) -->
+    <PropertyGroup>
+        <_DsInstallLocation Condition=" '$(Dedicated64)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) ">$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 298740@InstallLocation)</_DsInstallLocation>
+        <Dedicated64 Condition=" '$(Dedicated64)' == '' AND '$(_DsInstallLocation)' != '' ">$(_DsInstallLocation)\DedicatedServer64</Dedicated64>
+        <Dedicated64 Condition=" '$(Dedicated64)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) AND Exists('C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineersDedicatedServer\DedicatedServer64') ">C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineersDedicatedServer\DedicatedServer64</Dedicated64>
+        <Dedicated64 Condition=" '$(Dedicated64)' == '' AND '$(_UserHome)' != '' AND Exists('$(_UserHome)/.steam/steam/steamapps/common/SpaceEngineersDedicatedServer/DedicatedServer64') ">$(_UserHome)/.steam/steam/steamapps/common/SpaceEngineersDedicatedServer/DedicatedServer64</Dedicated64>
+        <Dedicated64 Condition=" '$(Dedicated64)' == '' AND '$(_UserHome)' != '' AND Exists('$(_UserHome)/.local/share/Steam/steamapps/common/SpaceEngineersDedicatedServer/DedicatedServer64') ">$(_UserHome)/.local/share/Steam/steamapps/common/SpaceEngineersDedicatedServer/DedicatedServer64</Dedicated64>
+    </PropertyGroup>
+
+    <!-- Magnetar: %AppData%\Magnetar on Windows, ~/.local/share/Magnetar on Linux -->
+    <PropertyGroup>
+        <Magnetar Condition=" '$(Magnetar)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) ">$([System.Environment]::GetFolderPath(SpecialFolder.ApplicationData))\Magnetar</Magnetar>
+        <Magnetar Condition=" '$(Magnetar)' == '' AND '$(_UserHome)' != '' ">$(_UserHome)/.local/share/Magnetar</Magnetar>
+
+        <MagnetarBin Condition=" '$(MagnetarBin)' == '' AND '$(Magnetar)' != '' AND !$([MSBuild]::IsOSPlatform('Windows')) ">$([System.IO.Path]::Combine('$(Magnetar)', 'Bin'))</MagnetarBin>
+        <!-- Windows: .NET Framework build -> MagnetarLegacy, .NET build -> MagnetarInterim -->
+        <MagnetarBin Condition=" '$(MagnetarBin)' == '' AND '$(Magnetar)' != '' AND $([MSBuild]::IsOSPlatform('Windows')) AND $(TargetFramework.StartsWith('net4')) ">$([System.IO.Path]::Combine('$(Magnetar)', 'Libraries', 'MagnetarLegacy'))</MagnetarBin>
+        <MagnetarBin Condition=" '$(MagnetarBin)' == '' AND '$(Magnetar)' != '' AND $([MSBuild]::IsOSPlatform('Windows')) AND '$(TargetFramework)' != '' AND !$(TargetFramework.StartsWith('net4')) ">$([System.IO.Path]::Combine('$(Magnetar)', 'Libraries', 'MagnetarInterim'))</MagnetarBin>
+    </PropertyGroup>
+</Project>

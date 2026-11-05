@@ -366,3 +366,6 @@ FodyWeavers.xsd
 .vs/
 GameBinaries/
 TorchBinaries/
+
+# Local path overrides for the Magnetar build, copy of Directory.Build.props.template
+Directory.Build.props

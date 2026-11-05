@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>AutoStation</AssemblyName>
+    <RootNamespace>AutoStation.MagnetarHost</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <!-- Version attributes come from ..\Versioning\AssemblyVersion.cs (written by Versioning\version.ps1) -->
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- Game assemblies are .NET Framework assemblies, NU1701 is noise when compiling against them from net10 -->
+    <NoWarn>$(NoWarn);NU1701;MSB3277</NoWarn>
+
+    <!-- Magnetar has two launchers: MagnetarLegacy (.NET Framework 4.8, Windows only) and MagnetarInterim (.NET 10) -->
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows'))">net48;net10.0</TargetFrameworks>
+    <TargetFramework Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Magnetar PluginSdk: config, commands and logging. Provided by the Magnetar host at runtime (Private=False). -->
+    <Reference Include="PluginSdk">
+      <HintPath>$(MagnetarBin)\PluginSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- Dedicated Server assemblies. Only what the plugin uses. -->
+    <Reference Include="netstandard"><HintPath>$(Dedicated64)\netstandard.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="ProtoBuf.Net"><HintPath>$(Dedicated64)\ProtoBuf.Net.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="ProtoBuf.Net.Core"><HintPath>$(Dedicated64)\ProtoBuf.Net.Core.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="Sandbox.Common"><HintPath>$(Dedicated64)\Sandbox.Common.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="Sandbox.Game"><HintPath>$(Dedicated64)\Sandbox.Game.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="SpaceEngineers.Game"><HintPath>$(Dedicated64)\SpaceEngineers.Game.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="SpaceEngineers.ObjectBuilders"><HintPath>$(Dedicated64)\SpaceEngineers.ObjectBuilders.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="VRage"><HintPath>$(Dedicated64)\VRage.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="VRage.Game"><HintPath>$(Dedicated64)\VRage.Game.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="VRage.Library"><HintPath>$(Dedicated64)\VRage.Library.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="VRage.Math"><HintPath>$(Dedicated64)\VRage.Math.dll</HintPath><Private>False</Private></Reference>
+    <Reference Include="VRage.Network"><HintPath>$(Dedicated64)\VRage.Network.dll</HintPath><Private>False</Private></Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Versioning\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <!-- After a build, copy the plugin into the local Magnetar install so it can be enabled right away.
+       Skipped silently when Magnetar is not installed here. Disable with -p:DeployToMagnetar=false -->
+  <Target Name="DeployToMagnetar" AfterTargets="Build" Condition="'$(DeployToMagnetar)' != 'false'">
+    <PropertyGroup>
+      <_MagnetarEdition Condition="$(TargetFramework.StartsWith('net4'))">Legacy</_MagnetarEdition>
+      <_MagnetarEdition Condition="'$(_MagnetarEdition)' == ''">Interim</_MagnetarEdition>
+      <_MagnetarLocal>$([System.IO.Path]::Combine('$(Magnetar)', '$(_MagnetarEdition)', 'Local'))</_MagnetarLocal>
+    </PropertyGroup>
+    <Copy Condition="Exists('$(_MagnetarLocal)')" SourceFiles="$(TargetPath)" DestinationFolder="$(_MagnetarLocal)" Retries="10" RetryDelayMilliseconds="500" />
+    <Message Importance="high" Condition="Exists('$(_MagnetarLocal)')" Text="Deployed $(TargetFileName) to $(_MagnetarLocal)" />
+    <Message Importance="high" Condition="!Exists('$(_MagnetarLocal)')" Text="Magnetar $(_MagnetarEdition) Local folder not found ($(_MagnetarLocal)), not deploying" />
+  </Target>
+
+  <Import Project="..\Shared\Shared.projitems" Label="Shared" />
+</Project>

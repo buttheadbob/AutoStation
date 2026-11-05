@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<PluginData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GitHubPlugin">
+    <!-- MagnetarHub descriptor, copy it to the Plugins folder of the magnetar-hub repository when publishing.
+         Magnetar compiles the SourceDirectories below itself, from the pinned commit. The Torch build is not part of it. -->
+
+    <!-- The ID of your plugin, never change this -->
+    <Id>e678cf63-204e-46f0-8111-626ecedf6cd2</Id>
+
+    <RepoId>buttheadbob/AutoStation</RepoId>
+
+    <FriendlyName>AutoStation</FriendlyName>
+
+    <Author>SentorX</Author>
+
+    <Tooltip>Converts inactive grids to station mode to preserve sim speed</Tooltip>
+
+    <Description>
+Physics on dynamic grids costs the server many times more than on stations. AutoStation converts the grids of players
+who have been offline for a set time to station mode, on a timer, to help preserve sim speed.
+
+Configure it in Quasar under Server plugins: how often it runs, how long owners must be offline, a minimum distance from
+online players, and whether grids in gravity, subgrids and unowned grids are included. Grid tracking leaves grids that
+are still moving alone, so players can use a team mate's grid while its owner is offline.
+
+Commands: !AS About, !AS ForceRun (moderators), !AS ForceAll_ADMIN [smallGrids] [subGrids] (admins).
+
+Also available as a Torch plugin, both builds share the same code.
+    </Description>
+
+    <SourceDirectories>
+        <Directory>ServerPlugin</Directory>
+        <Directory>Shared</Directory>
+        <Directory>Versioning</Directory>
+    </SourceDirectories>
+
+    <Commit></Commit>
+</PluginData>

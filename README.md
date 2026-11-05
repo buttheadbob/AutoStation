@@ -26,6 +26,7 @@ Use this plugin convert inactive grids to station mode and help preserver simspe
   
 ```Track Grids``` When enabled, allows players to use team member grids without fear it will  
 convert to station mode as long as the grid is not in the same place across 2 conversion runs.  
+The first run after a start or restart only records where grids are, so the second is the first that can convert them.  
 ```Minimum Distance``` Used in consideration if the grid should be considered not moving, even when it technically is.  This helps with grids floating around stations and other similar scenarios.  
 
 ** The cost to track grids is extremely minimal.  
@@ -36,5 +37,24 @@ convert to station mode as long as the grid is not in the same place across 2 co
 ```!AS ForceRun``` Forces the AutoConvert to check and convert grids.  
   
 ```!AS ForceAll_ADMIN [bool ForceSmallGrids] [bool ForceSubGrids]``` Use without the bools to convert small or sub grids will cause only large grids to be converted. 
+
+### Torch and Magnetar  
+AutoStation runs on both, and both builds share the same code in `Shared`.  
+```TorchPlugin``` The Torch plugin, configured on its tab in Torch.  
+  
+```ServerPlugin``` The Magnetar plugin, configured in Quasar under Server plugins.  Its options and commands match Torch.  
+  
+The two keep separate config files, so settings do not carry over from one to the other.  
+
+### Building  
+Run `Setup (run before opening solution).bat` once after cloning, then `build.bat`.  
+```build.bat``` Builds both for release.  Add `torch` or `magnetar` to build one, for example `build.bat magnetar`.  
+  
+The Torch build needs Visual Studio and creates `Build\AutoStation.zip`.  The Magnetar build needs the .NET SDK and a Magnetar install, or the path to `PluginSdk.dll` set in `Directory.Build.props`.  
+  
+Each `build.bat` run raises the last part of the version in `Versioning\AssemblyVersion.cs` and copies it into `TorchPlugin\manifest.xml`.  `AutoStation.xml` is the MagnetarHub manifest.  
+
+### License  
+Public domain ([The Unlicense](LICENSE.txt)): anyone may copy, modify, use and redistribute it for any purpose, no conditions.  
 
 For more information or help, join my discord server --> https://discord.gg/rSuxGrHrrt

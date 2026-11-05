@@ -14,7 +14,7 @@ using AutoStation.UI;
 
 namespace AutoStation
 {
-    public class AutoStation_Main : TorchPluginBase, IWpfPlugin
+    public class AutoStation_Main : TorchPluginBase, IWpfPlugin, IAutoStationHost
     {
         public static readonly Logger Log = LogManager.GetLogger("AutoStation");
         private const string CONFIG_FILE_NAME = "AutoStation___Save_Your_SSConfig.cfg";
@@ -26,11 +26,17 @@ namespace AutoStation
         public AutoStation_Config? Config => _config?.Data;
         public static AutoStation_Main? Instance { get; private set; }
 
+        // IAutoStationHost
+        IAutoStationConfig IAutoStationHost.Config => Config!;
+        void IAutoStationHost.LogInfo(string message) => Log.Info(message);
+        void IAutoStationHost.LogError(Exception exception, string message) => Log.Error(exception, message);
+
         public override void Init(ITorchBase torch)
         {
             base.Init(torch);
 
             SetupConfig();
+            AutoStationCore.Host = this;
 
             TorchSessionManager? sessionManager = Torch.Managers.GetManager<TorchSessionManager>();
             if (sessionManager != null)
