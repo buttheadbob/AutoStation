@@ -20,6 +20,7 @@ Use this plugin convert inactive grids to station mode and help preserver simspe
 ```Frequency in Minutes``` How often to check and convert grids to station mode.  
   
 ```Minutes Offline``` How long a player needs to be offline before his grids are able to be converted.  
+** A grid is never converted while a player is flying it, or any grid joined to it by a rotor, piston or wheel.  This does not include grids docked by a connector or landing gear.  Only ```ForceAll_ADMIN``` ignores this.  
   
 ```Convert Grids In Gravity``` This will convert grids in gravity when enabled.   
 ** This could cause problems for players whos grids are converted in voxels.  

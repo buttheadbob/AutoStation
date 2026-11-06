@@ -110,6 +110,8 @@ namespace AutoStation.Utils
 
             foreach (MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Group group in MyCubeGridGroups.Static.Mechanical.Groups)
             {
+                bool piloted = IsPiloted(group);
+
                 foreach (MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Node node in group.Nodes)
                 {
                     MyCubeGrid? grid = node.NodeData;
@@ -124,11 +126,23 @@ namespace AutoStation.Utils
 
                     List<long>? owners = grid.BigOwners;
                     long owner = owners?.FirstOrDefault() ?? 0;
-                    grids.Add(new GridInfo(grid, node.ParentLinks.Count > 0, owners?.Count ?? 0, owner, MySession.Static.Players.TryGetSteamId(owner), grid.GetOwnerLogoutTimeSeconds(), grid.PositionComp.GetPosition()));
+                    grids.Add(new GridInfo(grid, node.ParentLinks.Count > 0, owners?.Count ?? 0, owner, MySession.Static.Players.TryGetSteamId(owner), grid.GetOwnerLogoutTimeSeconds(), grid.PositionComp.GetPosition(), piloted));
                 }
             }
 
             return grids;
+        }
+
+        // Each grid has its own control system, so a subgrid does not report the pilot of the ship it is on.
+        private static bool IsPiloted(MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Group group)
+        {
+            foreach (MyGroups<MyCubeGrid, MyGridMechanicalGroupData>.Node node in group.Nodes)
+            {
+                if (node.NodeData?.GridSystems?.ControlSystem?.IsControlled == true)
+                    return true;
+            }
+
+            return false;
         }
 
         private static void AutoRun(List<GridInfo> grids, List<Vector3D> onlinePlayerLocations, Stopwatch msTracker, bool forcedByAdmin, bool smallGrids, bool subGrids)
@@ -174,6 +188,10 @@ namespace AutoStation.Utils
 
                         return;
                     }
+
+                    // A team mate can be flying a grid whose owner is offline. It would stop dead, and only its owner or an admin could turn it back.
+                    if (info.IsPiloted)
+                        return;
 
                     // Check if the grid is near players and skip if needed
                     if (AutoStationCore.Config.MinDistanceFromPlayers > 0)
@@ -357,7 +375,7 @@ namespace AutoStation.Utils
     }
 
     /// <summary>What a run needs from a grid, read on the game thread by <see cref="Auto.TakeSnapshot"/>.</summary>
-    internal readonly struct GridInfo(MyCubeGrid grid, bool isSubGrid, int ownerCount, long owner, ulong ownerSteamId, float logoutSeconds, Vector3D position)
+    internal readonly struct GridInfo(MyCubeGrid grid, bool isSubGrid, int ownerCount, long owner, ulong ownerSteamId, float logoutSeconds, Vector3D position, bool isPiloted)
     {
         public readonly MyCubeGrid Grid = grid;
         public readonly bool IsSubGrid = isSubGrid;
@@ -366,6 +384,7 @@ namespace AutoStation.Utils
         public readonly ulong OwnerSteamId = ownerSteamId;
         public readonly float LogoutSeconds = logoutSeconds;
         public readonly Vector3D Position = position;
+        public readonly bool IsPiloted = isPiloted;
 
         // MySession.Static.Players.IdentityIsNpc(id) does not always return true if the owner is an NPC.... so we check for 0 steamID.
         public bool IsNpc => OwnerSteamId == 0;

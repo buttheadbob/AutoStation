@@ -369,3 +369,6 @@ TorchBinaries/
 
 # Local path overrides for the Magnetar build, copy of Directory.Build.props.template
 Directory.Build.props
+
+# Build output, the zip is produced by build.bat
+/Build/
